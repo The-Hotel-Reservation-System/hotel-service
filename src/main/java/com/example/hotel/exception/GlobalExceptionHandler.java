@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Object> handleHotelException(HotelServiceException exception) {
     log.error("HotelException", exception);
     return new ResponseEntity<>(
-        converter.toJsonNode(exception.hotelExceptionResponse, StringUtils.EMPTY),
+        converter.toJsonNode(exception.getHotelExceptionResponse(), StringUtils.EMPTY),
         new HttpHeaders(),
         exception.hotelExceptionResponse.getHttpStatus()
     );

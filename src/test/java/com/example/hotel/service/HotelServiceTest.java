@@ -2,7 +2,11 @@ package com.example.hotel.service;
 
 import com.example.hotel.exception.HotelServiceException;
 import com.example.hotel.model.dto.HotelDto;
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.entity.Hotel;
+import com.example.hotel.model.entity.Room;
+import com.example.hotel.model.entity.RoomStatus;
+import com.example.hotel.model.entity.RoomType;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 import com.example.hotel.repository.HotelRepository;
@@ -22,17 +26,30 @@ import java.util.Optional;
 @ExtendWith(SpringExtension.class)
 public class HotelServiceTest {
 
+  private Hotel hotel;
   private final String NAME = "Name";
   private final String ADDRESS = "Address";
   private final String PHONE = "1234567890";
   private final BigInteger ID = BigInteger.ONE;
-  private Hotel hotel;
-
+  private final String PRICE = "12345";
+  private final RoomStatus ROOM_STATUS =
+      RoomStatus.builder()
+          .id(1)
+          .name(NAME)
+          .build();
+  private final RoomType ROOM_TYPE =
+      RoomType.builder()
+          .id(1)
+          .name(NAME)
+          .price(PRICE)
+          .build();
   @Mock
   HotelRepository hotelRepository;
   HotelService hotelService;
   List<HotelDto> hotelDtoList = new ArrayList<>();
   List<Hotel> hotelList = new ArrayList<>();
+  List<Room> rooms = new ArrayList<>();
+  List<RoomDto> roomsDto = new ArrayList<>();
 
   @BeforeEach
   public void init() {
@@ -40,6 +57,8 @@ public class HotelServiceTest {
     hotelService = new HotelServiceImpl(hotelRepository);
     hotelDtoList.add(buildHotelDtoModel());
     hotelList.add(buildHotelModel());
+    rooms.add(buildRoomModel());
+    roomsDto.add(buildRoomDtoModel());
   }
 
   @Test
@@ -100,6 +119,38 @@ public class HotelServiceTest {
     Assertions.assertThrows(HotelServiceException.class, () -> hotelService.deleteHotel("12"));
   }
 
+  @Test
+  public void getRoomOfHotel_shouldWork() {
+    Mockito.when(hotelRepository.findById(Mockito.any(BigInteger.class))).thenReturn(Optional.of(hotel));
+    List<RoomDto> rooms = hotelService.getRoom("123");
+    Assertions.assertEquals(roomsDto, rooms);
+  }
+
+  @Test
+  public void getRoomOfHotel_NotFound_shouldThrowException() {
+    Mockito.when(hotelRepository.findById(Mockito.any(BigInteger.class))).thenReturn(Optional.empty());
+    Assertions.assertThrows(HotelServiceException.class, () -> hotelService.getRoom("200"));
+  }
+
+
+  private Room buildRoomModel() {
+    return Room.builder()
+        .hotel(hotel)
+        .id(ID)
+        .status(ROOM_STATUS)
+        .type(ROOM_TYPE)
+        .build();
+  }
+
+  private RoomDto buildRoomDtoModel() {
+    return RoomDto.builder()
+        .hotel(hotel.getName())
+        .id(ID)
+        .status(ROOM_STATUS.getName())
+        .type(ROOM_TYPE.getName())
+        .price(PRICE)
+        .build();
+  }
   private UpdateHotelRequest buildUpdateHotelRequest() {
     return UpdateHotelRequest.builder()
         .address(ADDRESS)
@@ -122,6 +173,7 @@ public class HotelServiceTest {
         .phone(PHONE)
         .name(NAME)
         .id(ID)
+        .rooms(rooms)
         .build();
   }
 
@@ -131,6 +183,7 @@ public class HotelServiceTest {
         .phone(PHONE)
         .name(NAME)
         .id(ID)
+        .rooms(roomsDto)
         .build();
   }
 }

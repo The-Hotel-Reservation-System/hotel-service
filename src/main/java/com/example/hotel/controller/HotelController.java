@@ -1,5 +1,6 @@
 package com.example.hotel.controller;
 
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -98,4 +99,21 @@ public interface HotelController {
           content = @Content)
   })
   ResponseEntity<Boolean> deleteHotel(@PathVariable String hotelId);
+
+  /**
+   * Get the room with specific id
+   * @param hotelId the id of hotel
+   * @return RoomDto the hotel response model {@link RoomDto}
+   */
+  @GetMapping("/{hotelId}/room")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Found room.",
+          content = { @Content(mediaType = "application/json",
+              schema = @Schema(implementation = RoomDto.class)) }),
+      @ApiResponse(responseCode = "400", description = "Invalid id supplied.",
+          content = @Content),
+      @ApiResponse(responseCode = "404", description = "Room not found.",
+          content = @Content)
+  })
+  ResponseEntity<List<RoomDto>> getRoom(@PathVariable String hotelId);
 }

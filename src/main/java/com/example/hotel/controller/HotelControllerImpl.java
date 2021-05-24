@@ -1,9 +1,11 @@
 package com.example.hotel.controller;
 
 import com.example.hotel.model.dto.HotelDto;
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 import com.example.hotel.service.HotelService;
+import com.example.hotel.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ public class HotelControllerImpl implements HotelController {
   public HotelControllerImpl(HotelService hotelService) {
     this.hotelService = hotelService;
   }
+
 
   @Override
   public ResponseEntity<HotelDto> getHotel(String hotelId) {
@@ -43,5 +46,10 @@ public class HotelControllerImpl implements HotelController {
   @Override
   public ResponseEntity<Boolean> deleteHotel(String hotelId) {
     return ResponseEntity.ok(hotelService.deleteHotel(hotelId));
+  }
+
+  @Override
+  public ResponseEntity<List<RoomDto>> getRoom(String hotelId) {
+    return ResponseEntity.ok(hotelService.getRoom(hotelId));
   }
 }
