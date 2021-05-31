@@ -102,7 +102,7 @@ public class HotelServiceImpl implements HotelService {
 
   private HotelDto convertToHotelDto(Hotel hotel) {
     return HotelDto.builder()
-        .id(hotel.getId())
+        .id(hotel.getId().toString())
         .address(hotel.getAddress())
         .phone(hotel.getPhone())
         .name(hotel.getName())

@@ -1,5 +1,6 @@
 package com.example.hotel.exception;
 
+import brave.Tracer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -19,11 +20,14 @@ public class GlobalExceptionHandler {
   @Autowired
   HotelServiceExceptionConverter converter;
 
+  @Autowired
+  private Tracer tracer;
+
   @ExceptionHandler(HotelServiceException.class)
   public ResponseEntity<Object> handleHotelException(HotelServiceException exception) {
     log.error("HotelException", exception);
     return new ResponseEntity<>(
-        converter.toJsonNode(exception.getHotelExceptionResponse(), StringUtils.EMPTY),
+        converter.toJsonNode(exception.getHotelExceptionResponse(), StringUtils.EMPTY, tracer),
         new HttpHeaders(),
         exception.hotelExceptionResponse.getHttpStatus()
     );
@@ -40,7 +44,8 @@ public class GlobalExceptionHandler {
                                  .getBindingResult()
                                  .getAllErrors()
                                  .get(NumberUtils.INTEGER_ZERO)
-                                 .getDefaultMessage()
+                                 .getDefaultMessage(),
+                             tracer
         ),
         new HttpHeaders(),
         HttpStatus.BAD_REQUEST);

@@ -68,7 +68,7 @@ public class HotelServiceTest {
     Assertions.assertEquals(NAME, hotelDto.getName());
     Assertions.assertEquals(ADDRESS, hotelDto.getAddress());
     Assertions.assertEquals(PHONE, hotelDto.getPhone());
-    Assertions.assertEquals(ID, hotelDto.getId());
+    Assertions.assertEquals(ID.toString(), hotelDto.getId());
   }
 
   @Test
@@ -182,7 +182,7 @@ public class HotelServiceTest {
         .address(ADDRESS)
         .phone(PHONE)
         .name(NAME)
-        .id(ID)
+        .id(ID.toString())
         .rooms(roomsDto)
         .build();
   }

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -86,28 +87,31 @@ public class RoomServiceImpl implements RoomService {
   public RoomDto updateRoom(String roomId, UpdateRoomRequest request) {
     log.info("Update room {} with request {}", roomId, request);
 
-    var roomStatus = roomStatusRepository.findByName(request.getRoomStatus())
-        .orElseThrow(() -> {
-          log.error("Cannot find room status {}", request.getRoomStatus());
-          return new HotelServiceException(HotelExceptionResponse.ROOM_STATUS_NOT_FOUND);
-        });
-
-    var roomType = roomTypeRepository.findByName(request.getRoomType())
-        .orElseThrow(() -> {
-          log.error("Cannot find room status {}", request.getRoomStatus());
-          return new HotelServiceException(HotelExceptionResponse.ROOM_TYPE_NOT_FOUND);
-        });
-
-    return roomRepository.findById(new BigInteger(roomId))
-        .map(room -> {
-          room.setType(roomType);
-          room.setStatus(roomStatus);
-          return convertToRoomDto(roomRepository.save(room));
-        })
+    var room = roomRepository.findById(new BigInteger(roomId))
         .orElseThrow(() -> {
           log.error("Cannot find a room {}", roomId);
           return new HotelServiceException(HotelExceptionResponse.ROOM_NOT_FOUND);
         });
+
+    var roomStatus = Optional.ofNullable(request.getRoomStatus())
+        .map(status -> roomStatusRepository.findByName(status)
+            .orElseThrow(() -> {
+              log.error("Cannot find room status {}", status);
+              return new HotelServiceException(HotelExceptionResponse.ROOM_STATUS_NOT_FOUND);
+            })).orElse(room.getStatus());
+
+    var roomType = Optional.ofNullable(request.getRoomType())
+        .map(type -> roomTypeRepository.findByName(type)
+            .orElseThrow(() -> {
+              log.error("Cannot find room status {}", type);
+              return new HotelServiceException(HotelExceptionResponse.ROOM_TYPE_NOT_FOUND);
+            }))
+        .orElse(room.getType());
+
+    room.setStatus(roomStatus);
+    room.setType(roomType);
+
+    return convertToRoomDto(roomRepository.save(room));
   }
 
   @Override
