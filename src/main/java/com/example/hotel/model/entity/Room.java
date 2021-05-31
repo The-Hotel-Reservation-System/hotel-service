@@ -6,30 +6,34 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "hotel", schema = "public")
-public class Hotel {
+@AllArgsConstructor
+@Builder
+@Table(name = "room", schema = "public")
+public class Room {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private BigInteger id;
-  private String name;
-  private String phone;
-  private String address;
-  @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-  private List<Room> rooms;
-
+  @ManyToOne(targetEntity = RoomType.class)
+  @JoinColumn(name = "type_id")
+  private RoomType type;
+  @ManyToOne(targetEntity = RoomStatus.class)
+  @JoinColumn(name = "status_id")
+  private RoomStatus status;
+  @ManyToOne(targetEntity = Hotel.class)
+  @JoinColumn(name = "hotel_id")
+  private Hotel hotel;
 }

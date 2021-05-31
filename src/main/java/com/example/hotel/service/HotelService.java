@@ -1,6 +1,7 @@
 package com.example.hotel.service;
 
 import com.example.hotel.model.dto.HotelDto;
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 
@@ -42,4 +43,11 @@ public interface HotelService {
    * @return Boolean
    */
   Boolean deleteHotel(String hotelId);
+
+  /**
+   *
+   * @param hotelId hotel id
+   * @return List<RoomDto> the rooms of hotel {@link List<RoomDto>}
+   */
+  List<RoomDto> getRoom(String hotelId);
 }

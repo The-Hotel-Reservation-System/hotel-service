@@ -3,7 +3,9 @@ package com.example.hotel.service;
 import com.example.hotel.exception.HotelExceptionResponse;
 import com.example.hotel.exception.HotelServiceException;
 import com.example.hotel.model.dto.HotelDto;
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.entity.Hotel;
+import com.example.hotel.model.entity.Room;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 import com.example.hotel.repository.HotelRepository;
@@ -14,6 +16,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -85,12 +88,40 @@ public class HotelServiceImpl implements HotelService {
         });
   }
 
+  @Override
+  public List<RoomDto> getRoom(String hotelId) {
+    log.info("Get rooms of hotel {}", hotelId);
+    List<RoomDto> rooms = new ArrayList<>();
+    return hotelRepository.findById(new BigInteger(hotelId))
+        .map(hotel -> convertListRoomToListRoomDto(hotel.getRooms()))
+        .orElseThrow(() -> {
+          log.error("Cannot find hotel {}", hotelId);
+          return new HotelServiceException(HotelExceptionResponse.HOTEL_NOT_FOUND);
+        });
+  }
+
   private HotelDto convertToHotelDto(Hotel hotel) {
     return HotelDto.builder()
         .id(hotel.getId())
         .address(hotel.getAddress())
         .phone(hotel.getPhone())
         .name(hotel.getName())
+        .rooms(convertListRoomToListRoomDto(hotel.getRooms()))
         .build();
+  }
+
+  private List<RoomDto> convertListRoomToListRoomDto(List<Room> rooms) {
+    return rooms.stream()
+        .map(room -> convertToRoomDto(room))
+        .collect(Collectors.toList());
+  }
+
+  private RoomDto convertToRoomDto(Room room) {
+    return RoomDto.builder()
+        .hotel(room.getHotel().getName())
+        .id(room.getId())
+        .status(room.getStatus().getName())
+        .type(room.getType().getName())
+        .price(room.getType().getPrice()).build();
   }
 }

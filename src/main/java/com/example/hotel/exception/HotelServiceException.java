@@ -4,11 +4,13 @@ import lombok.Getter;
 
 public class HotelServiceException extends RuntimeException {
 
-  @Getter
   HotelExceptionResponse hotelExceptionResponse;
 
   public HotelServiceException(HotelExceptionResponse hotelExceptionResponse) {
     this.hotelExceptionResponse = hotelExceptionResponse;
   }
 
+  public HotelExceptionResponse getHotelExceptionResponse() {
+    return hotelExceptionResponse;
+  }
 }

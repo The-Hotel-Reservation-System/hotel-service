@@ -1,9 +1,11 @@
 package com.example.hotel.controller;
 
 import com.example.hotel.model.dto.HotelDto;
+import com.example.hotel.model.dto.RoomDto;
 import com.example.hotel.model.request.CreateHotelRequest;
 import com.example.hotel.model.request.UpdateHotelRequest;
 import com.example.hotel.service.HotelService;
+import com.example.hotel.service.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +70,16 @@ public class HotelControllerTest {
     Mockito.when(hotelService.deleteHotel(Mockito.any(String.class)))
         .thenReturn(Boolean.TRUE);
     ResponseEntity<Boolean> responses = hotelController.deleteHotel(Mockito.any(String.class));
+    Assertions.assertEquals(HttpStatus.OK, responses.getStatusCode());
+  }
+
+  @Test
+  public void getRoom_shouldWork() {
+    List<RoomDto> list = new ArrayList<>();
+    list.add(RoomDto.builder().build());
+    Mockito.when(hotelService.getRoom(Mockito.any(String.class)))
+        .thenReturn(list);
+    ResponseEntity<List<RoomDto>> responses = hotelController.getRoom(Mockito.any(String.class));
     Assertions.assertEquals(HttpStatus.OK, responses.getStatusCode());
   }
 
