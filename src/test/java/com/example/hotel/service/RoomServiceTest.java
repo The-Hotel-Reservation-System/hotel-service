@@ -125,22 +125,22 @@ class RoomServiceTest {
 
   @Test
   void updateRoom_RoomNotFound_shouldThrowException() {
-    Mockito.when(roomTypeRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.of(ROOM_TYPE));
-    Mockito.when(roomStatusRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.of(ROOM_STATUS));
     Mockito.when(roomRepository.findById(Mockito.any(BigInteger.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(HotelServiceException.class, () -> roomService.updateRoom(ROOM_ID ,updateRoomRequest));
   }
 
   @Test
   void updateRoom_RoomStatusNotFound_shouldThrowException() {
+    Mockito.when(roomRepository.findById(Mockito.any(BigInteger.class))).thenReturn(Optional.of(room));
     Mockito.when(roomStatusRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(HotelServiceException.class, () -> roomService.updateRoom(ROOM_ID ,updateRoomRequest));
   }
 
   @Test
   void updateRoom_RoomTypeNotFound_shouldThrowException() {
-    Mockito.when(roomTypeRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.empty());
+    Mockito.when(roomRepository.findById(Mockito.any(BigInteger.class))).thenReturn(Optional.of(room));
     Mockito.when(roomStatusRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.of(ROOM_STATUS));
+    Mockito.when(roomTypeRepository.findByName(Mockito.any(String.class))).thenReturn(Optional.empty());
     Assertions.assertThrows(HotelServiceException.class, () -> roomService.updateRoom(ROOM_ID ,updateRoomRequest));
   }
 
